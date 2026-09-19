@@ -50,4 +50,15 @@ watchfiles==1.2.0
 websockets==17.1
 PyMuPDF
 pytesseract
+fastapi
+uvicorn
+pypdf
+python-docx
+PyMuPDF
+pytesseract
+Pillow
+PyJWT
+passlib
+bcrypt
+python-multipart
 
