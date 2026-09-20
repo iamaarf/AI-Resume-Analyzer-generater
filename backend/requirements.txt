@@ -12,3 +12,4 @@ python-multipart
 sqlmodel
 
 python-dotenv
+pwdlib[argon2]
