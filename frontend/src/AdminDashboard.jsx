@@ -3,7 +3,7 @@ import "./AdminDashboard.css";
 import AdminLogout from "./AdminLogout.jsx";
 
 const API_BASE_URL =
-  "http://127.0.0.1:8000";
+  "https://ai-resume-analyzer-generater.onrender.com";
 
 const getAdminHeaders = () => {
   const token =

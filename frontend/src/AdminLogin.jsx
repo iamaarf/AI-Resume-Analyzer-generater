@@ -20,7 +20,7 @@ function AdminLogin({ onLogin }) {
       formData.append("password", password);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/admin/login",
+        "https://ai-resume-analyzer-generater.onrender.com/admin/login",
         {
           method: "POST",
           headers: {
