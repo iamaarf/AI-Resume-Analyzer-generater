@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Session, create_engine, select
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -9,7 +9,9 @@ class AnalyticsEvent(SQLModel, table=True):
     event_type: str
     ats_score: Optional[int] = None
     has_job_description: bool = False
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(
+    default_factory=lambda: datetime.now(timezone.utc)
+)
 
 
 sqlite_file_name = "resume_analytics.db"
