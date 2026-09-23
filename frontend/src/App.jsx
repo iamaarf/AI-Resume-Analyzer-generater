@@ -79,15 +79,15 @@ const analyzeResume = async () => {
   <a href="#upload" className="nav-button">
     Analyze Resume
   </a>
-
-  <button
-    className="builder-nav-button"
-    onClick={() => {
-      window.location.href = "/resume-builder";
-    }}
-  >
-    ✨ Create Resume
-  </button>
+<button
+  className="builder-nav-button"
+  onClick={() => {
+    window.location.href = "/resume-builder";
+  }}
+>
+  ✨ Create Resume
+</button>
+ 
 </div>
       </header>
 

@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -1226,15 +1227,76 @@ job-targeted professional resume.
     # GEMINI GENERATION
     # ========================================================
 
-    response = client.models.generate_content(
-        model="gemini-3.6-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=ResumeOutput,
-            max_output_tokens=10000,
-        )
+       # ========================================================
+    # GEMINI GENERATION WITH RETRY + FALLBACK
+    # ========================================================
+
+    generation_config = types.GenerateContentConfig(
+        response_mime_type="application/json",
+        response_schema=ResumeOutput,
+        max_output_tokens=10000,
     )
+
+    models_to_try = [
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.5-flash",
+    ]
+
+    response = None
+    last_error = None
+
+    for model_name in models_to_try:
+
+        for attempt in range(3):
+
+            try:
+                print(
+                    f"Resume generation: "
+                    f"{model_name}, attempt {attempt + 1}/3"
+                )
+
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=generation_config,
+                )
+
+                if response and response.text:
+                    print(
+                        f"Resume generation successful "
+                        f"with {model_name}"
+                    )
+                    break
+
+            except Exception as error:
+
+                last_error = error
+
+                print(
+                    f"Resume generation failed: "
+                    f"{model_name}, "
+                    f"attempt {attempt + 1}/3: "
+                    f"{error}"
+                )
+
+                # Wait before retrying.
+                if attempt < 2:
+                    wait_seconds = 2 ** attempt
+                    time.sleep(wait_seconds)
+
+        if response and response.text:
+            break
+
+    if not response or not response.text:
+        print(
+            "All Gemini resume generation attempts failed:",
+            last_error
+        )
+
+        raise RuntimeError(
+            "Unable to generate resume after multiple attempts."
+        )
 
 
     # ========================================================
