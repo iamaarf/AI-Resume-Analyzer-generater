@@ -1237,14 +1237,13 @@ job-targeted professional resume.
         max_output_tokens=10000,
     )
 
-    # 3.5 is tried first because it has successfully
-    # generated resumes in the current deployment.
     models_to_try = [
-        "gemini-3.5-flash",
-        "gemini-3.8-flash",
-        "gemini-3.7-flash",
-    ]
-
+    "gemini-3.6-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash",
+    "gemini-3.8-flash",
+    "gemini-3.7-flash",
+]
     response = None
     last_error = None
 
