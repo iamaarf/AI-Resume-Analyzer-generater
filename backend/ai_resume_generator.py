@@ -1228,7 +1228,7 @@ job-targeted professional resume.
     # ========================================================
 
        # ========================================================
-    # GEMINI GENERATION WITH RETRY + FALLBACK
+    # GEMINI GENERATION - FAST FALLBACK
     # ========================================================
 
     generation_config = types.GenerateContentConfig(
@@ -1237,10 +1237,12 @@ job-targeted professional resume.
         max_output_tokens=10000,
     )
 
+    # 3.5 is tried first because it has successfully
+    # generated resumes in the current deployment.
     models_to_try = [
+        "gemini-3.5-flash",
         "gemini-3.8-flash",
         "gemini-3.7-flash",
-        "gemini-3.5-flash",
     ]
 
     response = None
@@ -1248,54 +1250,49 @@ job-targeted professional resume.
 
     for model_name in models_to_try:
 
-        for attempt in range(3):
+        try:
+            print(
+                f"Resume generation: "
+                f"trying {model_name}"
+            )
 
-            try:
-                print(
-                    f"Resume generation: "
-                    f"{model_name}, attempt {attempt + 1}/3"
-                )
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=generation_config,
+            )
 
-                response = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt,
-                    config=generation_config,
-                )
-
-                if response and response.text:
-                    print(
-                        f"Resume generation successful "
-                        f"with {model_name}"
-                    )
-                    break
-
-            except Exception as error:
-
-                last_error = error
+            if response and response.text:
 
                 print(
-                    f"Resume generation failed: "
-                    f"{model_name}, "
-                    f"attempt {attempt + 1}/3: "
-                    f"{error}"
+                    f"Resume generation successful "
+                    f"with {model_name}"
                 )
 
-                # Wait before retrying.
-                if attempt < 2:
-                    wait_seconds = 2 ** attempt
-                    time.sleep(wait_seconds)
+                break
 
-        if response and response.text:
-            break
+        except Exception as error:
+
+            last_error = error
+
+            print(
+                f"Resume generation failed: "
+                f"{model_name}: {error}"
+            )
+
+            # Immediately move to the next model.
+            continue
 
     if not response or not response.text:
+
         print(
             "All Gemini resume generation attempts failed:",
             last_error
         )
 
         raise RuntimeError(
-            "Unable to generate resume after multiple attempts."
+            "Unable to generate resume. "
+            "Gemini models are temporarily unavailable."
         )
 
 
