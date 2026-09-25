@@ -52,12 +52,12 @@ app.include_router(
 
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"https://ai-resume-analyzer-generater-1\.onrender\.com",
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5174",
-        "https://ai-resume-analyzer-generater-1.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
