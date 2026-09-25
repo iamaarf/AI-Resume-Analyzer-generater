@@ -43,8 +43,10 @@ from admin_auth import (
     get_current_admin,
 )
 from resume_builder_routes import router as resume_builder_router
+from analytics_database import create_database
 
 app = FastAPI()
+create_database()
 app.include_router(
     resume_builder_router
 )
